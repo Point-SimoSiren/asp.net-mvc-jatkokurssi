@@ -10,8 +10,11 @@ namespace WebAppEkaS2019.Controllers
 {
     public class HomeController : Controller
     {
+
         public ActionResult Index()
         {
+            ViewBag.MessageModal= "Tietoja Northwind-yhtiöstä ja Careeriasta";
+            ViewBag.LoginError = 0; //Ei virhettä...
             return View();
         }
 
@@ -77,6 +80,7 @@ namespace WebAppEkaS2019.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Authorize(Logins LoginModel)
         {
             northwindEntities db = new northwindEntities();
@@ -86,6 +90,7 @@ namespace WebAppEkaS2019.Controllers
             {
                 ViewBag.LoginMessage = "Successfull login";
                 ViewBag.LoggedStatus = "In";
+                ViewBag.LoginError = 0; //Ei virhettä...
                 Session["UserName"] = LoggedUser.UserName;
                 Session["LoginID"] = LoggedUser.LoginId;
                 //Session["AccessLevel"] = LoggedUser.AccessLevel;
@@ -95,8 +100,10 @@ namespace WebAppEkaS2019.Controllers
             {
                 ViewBag.LoginMessage = "Login unsuccessfull";
                 ViewBag.LoggedStatus = "Out";
+                ViewBag.LoginError = 1; //Pakotetaan modaali login-ruutu uudelleen koska kirjautumisyritys on epäonnistunut
                 LoginModel.LoginErrorMessage = "Tuntematon käyttäjätunnus tai salasana.";
-                return View("Login", LoginModel);
+                //return View("Login", LoginModel);
+                return View("Index", LoginModel);
             }
         }
         public ActionResult LogOut()
